@@ -1,5 +1,5 @@
 # import libraries
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template,url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -40,6 +40,18 @@ def index():
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks = tasks)
 
+# route for deleting task
+@app.route('/delete/<int:usr_id>')
+def delete(usr_id):
+    task_to_delete = Todo.query.get_or_404(usr_id)
+
+    try:
+        db.session.delete(task_to_delete)
+        db.session.commit()
+        return redirect('/')
+    except:
+        return 'There was a problem deleting that task'
+        
 
 if __name__ == "__main__":
     app.run(debug=True)
